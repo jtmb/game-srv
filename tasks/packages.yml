@@ -1,0 +1,68 @@
+# Packaging
+- name: Remove useless packages from the cache
+  tags:
+    - packages
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  tags:
+    - packages
+  apt:
+    autoremove: yes 
+
+- name: Update repositories cache and install "net-tools" package
+  tags:
+    - packages
+  apt:
+    name: net-tools
+    update_cache: yes
+
+- name: Update repositories cache and install "lshw" package
+  tags:
+    - packages
+  apt:
+    name: lshw
+    update_cache: yes
+
+- name: Update repositories cache and install "openssh-server" package
+  tags:
+    - packages
+  apt:
+    name: openssh-server
+    update_cache: yes
+
+- name: Update repositories cache and install "fail2ban" package
+  tags:
+    - packages
+  apt:
+    name: fail2ban
+    update_cache: yes
+
+- name: Update repositories cache and install "ufw" package
+  tags:
+    - packages
+  apt:
+    name: ufw
+    update_cache: yes
+      
+- name: Update repositories cache and install "git" package
+  tags:
+    - packages
+  apt:
+    name: git
+    update_cache: yes
+
+- name: Update repositories cache and install "httpie" package
+  tags:
+    - packages
+  apt:
+    name: httpie
+    update_cache: yes
+
+- name: Update repositories cache and install "letsencrypt" package
+  tags:
+    - packages
+  apt:
+    name: letsencrypt
+    update_cache: yes

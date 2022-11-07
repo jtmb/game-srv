@@ -1,0 +1,79 @@
+---
+# Fill in vars.yml before running
+
+# Post-provisioning VM
+- name: "Provision Enviorment"
+  strategy: linear
+  hosts: all
+  become: true
+  vars_files:
+    - vars/vars.yml
+    - vars/vault.yml
+  tasks:
+
+  - name: Collect Server IP
+    debug:
+      msg: "{{ ansible_ssh_host }}"
+
+  - name: Install Required Packages
+    when: deploy_packages == true
+    include: tasks/packages.yml
+
+  - name: Install Docker from official signed repo
+    when: deploy_packages == true
+    include: tasks/docker.yml
+    
+#  Provision Docker Containers om server1
+
+- name: "Provision Containers"
+  strategy: linear
+  hosts: server1
+  become_user: root
+  become: true
+  vars_files:
+    - vars/vars.yml
+    - vars/vault.yml
+  tasks:
+
+  - name: Collect Server IP
+    debug:
+      msg: "{{ ansible_ssh_host }}"
+
+  - name: Install Containers
+    when: deploy_containers == true
+    include: tasks/containers_1.yml
+
+  - name: Install MC Server
+    when: deploy_mc == true
+    include: tasks/minecraft_server.yml
+
+# Lock Down SSH and reboot
+  # !! preferablly this is the last task, after this task SSH ports will change to 2002 and key auth forced
+
+- name: "Lock Down SSH"
+  strategy: linear
+  hosts: all
+  become: true
+  vars_files:
+    - vars/vars.yml
+    - vars/vault.yml
+  tasks:
+  - name: Setup SSH security
+    when: deploy_ssh_key == true
+    include: tasks/ssh_security.yml
+  
+  - name: Setup Ansible User
+    when: provision_user == true
+    include: tasks/user_provisioning.yml
+
+- name: "Update and Reboot"
+  strategy: linear
+  hosts: all
+  become: true
+  vars_files:
+    - vars/vars.yml
+    - vars/vault.yml
+  tasks:
+  - name: Update and Reboot
+    when: update_reboot == true
+    include: tasks/update_reboot.yml

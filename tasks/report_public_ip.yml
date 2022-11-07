@@ -1,0 +1,3 @@
+- name: report public ip and save to VAR
+  shell: "curl 'https://api.ipify.org'"
+  register: public_ip

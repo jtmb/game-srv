@@ -1,0 +1,60 @@
+- name: "Set SSH Enviorment to alternate port"
+  tags:
+    - ssh
+  shell: "ufw allow ssh && \
+            ufw allow 2002/tcp"
+
+- name: Creates SSH hidden directory
+  tags:
+    - ssh
+    - deploy_user
+  file:
+      path: "{{homedir}}/.ssh"
+      state: directory
+
+- name: Copy a "sshd_config" file from repo to the remote machine
+  tags:
+    - ssh
+  copy:
+    # src: "{{homedir}}/repos/{{repo_name}}/post-provisioning/defaults/sshd_config"
+    src: "./defaults/sshd_config"
+    dest: "/etc/ssh/sshd_config"
+
+- name: Copy a "id_rsa.pub" file from dev container to the remote machine and add it to authorized users
+  tags:
+    - deploy_user
+  copy:
+      src: "{{ ssh_key_to_deploy }}"
+      dest: "/home/{{ssh_user}}/.ssh/authorized_keys"
+
+- name: "Restart SSH Service"
+  tags:
+    - ssh
+  shell: "systemctl restart sshd"
+
+- name: "Create Endless SSH Docker Container"
+  tags:
+    - ssh
+  ignore_errors: true
+  shell: "docker rm -f endlessh && docker run -d \
+      --name=endlessh \
+      -e PUID=1000 \
+      -e PGID=1000 \
+      -e TZ=America/Toronto \
+      -e MSDELAY=10000 `#optional` \
+      -e MAXLINES=32 `#optional` \
+      -e MAXCLIENTS=4096 `#optional` \
+      -e LOGFILE=true `#optional` \
+      -e BINDFAMILY= `#optional` \
+      -p 22:2222 \
+      -v {{homedir}}/container-program-files/endlessh:/config `#optional` \
+      --restart unless-stopped \
+      lscr.io/linuxserver/endlessh"
+
+- name: "Remove and dissable GUI in Ubuntu"
+  tags:
+    - ssh
+  shell: "apt-get purge ubuntu-desktop -y && \
+            systemctl set-default multi-user"
+  ignore_errors: true
+  no_log: true
