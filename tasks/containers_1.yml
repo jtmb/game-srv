@@ -48,3 +48,44 @@
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     env: 
         GLANCES_OPT: "-w"
+
+- name: Create DB mariadb
+  docker_container:
+    name: "mariadb"
+    image: "ghcr.io/linuxserver/mariadb"
+    pull: yes
+    state: started
+    restart: yes
+    restart_policy: unless-stopped
+    ports: 
+      - "{{ ansible_ssh_host }}:9092:3306"
+    volumes:
+      - '{{homedir}}/container-program-files/mariadb/database:/var/lib/mysql'
+    env: 
+        TZ: "America/Toronto"
+        MYSQL_ROOT_PASSWORD: "{{ssh_pass}}"
+        MARIADB_USER: "{{ssh_user}}"
+        MARIADB_PASSWORD: "{{ssh_pass}}"
+        MARIADB_ROOT_PASSWORD: "{{ssh_pass}}"
+
+- name: "Create myphpadmin container"
+  ignore_errors: true
+  shell: "sudo docker run --name myphpadmin -d --link mariadb:db -p 8095:80 phpmyadmin"
+
+- name: Create Wordpress Container
+  docker_container:
+    name: "wordpress"
+    image: "wordpress"
+    pull: yes
+    state: started
+    restart: yes
+    restart_policy: unless-stopped
+    ports: 
+      - "{{ ansible_ssh_host }}:9093:3306"
+    volumes:
+      - '{{homedir}}/container-program-files/wordpress:/var/www/html'
+    env: 
+        WORDPRESS_DB_HOST: mariadb
+        WORDPRESS_DB_USER: "{{ssh_user}}"
+        WORDPRESS_DB_PASSWORD: "{{ssh_pass}}"
+        WORDPRESS_DB_NAME: wordpress_db
