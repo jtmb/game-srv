@@ -21,8 +21,8 @@ ssh_key_to_deploy: "{{ssh_key_to_deploy_secret}}" #key to deploy for user
 
 # Debug Vars
 deploy_containers: true   # leave true to deploy container workload, flase to skip container workload.
-deploy_packages: false
-deploy_ssh_key: true
+deploy_packages: true
+deploy_ssh_key: false
 update_reboot: true
 provision_user: true
 deploy_mc: true
