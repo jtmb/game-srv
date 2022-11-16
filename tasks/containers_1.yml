@@ -70,22 +70,20 @@
 
 - name: "Create myphpadmin container"
   ignore_errors: true
-  shell: "sudo docker run --name myphpadmin -d --link mariadb:db -p 8095:80 phpmyadmin"
+  shell: "sudo docker run --name myphpadmin -d --link mariadb:db -p 8095:80 phpmyadmin --restart unless-stopped"
 
-- name: Create Wordpress Container
+- name: Create ghost Container
   docker_container:
-    name: "wordpress"
-    image: "wordpress"
+    name: "ghost"
+    image: "ghost"
     pull: yes
     state: started
     restart: yes
     restart_policy: unless-stopped
     ports: 
-      - "{{ ansible_ssh_host }}:9093:80"
+      - "{{ ansible_ssh_host }}:9093:2368"
     volumes:
-      - '{{homedir}}/container-program-files/wordpress:/var/www/html'
+      - '{{homedir}}/container-program-files/ghost:/var/lib/ghost/content'
     env: 
-        WORDPRESS_DB_HOST: mariadb
-        WORDPRESS_DB_USER: "{{ssh_user}}"
-        WORDPRESS_DB_PASSWORD: "{{ssh_pass}}"
-        WORDPRESS_DB_NAME: wordpress_db
+        NODE_ENV: "development"
+        url: "https://blog.branconet.com"

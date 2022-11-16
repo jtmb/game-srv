@@ -24,5 +24,4 @@ deploy_containers: true   # leave true to deploy container workload, flase to sk
 deploy_packages: true
 deploy_ssh_key: false
 update_reboot: true
-provision_user: true
-deploy_mc: true
+provision_user: false
