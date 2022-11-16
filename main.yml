@@ -43,10 +43,6 @@
     when: deploy_containers == true
     include: tasks/containers_1.yml
 
-  - name: Install MC Server
-    when: deploy_mc == true
-    include: tasks/minecraft_server.yml
-
 # Lock Down SSH and reboot
   # !! preferablly this is the last task, after this task SSH ports will change to 2002 and key auth forced
 

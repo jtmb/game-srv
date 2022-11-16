@@ -81,7 +81,7 @@
     restart: yes
     restart_policy: unless-stopped
     ports: 
-      - "{{ ansible_ssh_host }}:9093:3306"
+      - "{{ ansible_ssh_host }}:9093:80"
     volumes:
       - '{{homedir}}/container-program-files/wordpress:/var/www/html'
     env: 

@@ -26,18 +26,3 @@ deploy_ssh_key: true
 update_reboot: true
 provision_user: true
 deploy_mc: true
-
-# MC Server Vars
-HOSTNAME: "mc.branconet.com"
-PORT: "25565"
-TYPE: "PAPER" 
-CPUS: "2" 
-MEMORY: "4G" 
-MAX_MEMORY: "{{MEMORY}}" 
-INIT_MEMORY: "2G" 
-MOTD: "Defeating a sandwich only makes it tastier." 
-ENABLE_RCON: "true" 
-RCON_PASSWORD: "{{ ssh_pass_secret }}" 
-EXEC_DIRECTLY: "true" 
-TZ: "America/Toronto" 
-EULA: "TRUE"
